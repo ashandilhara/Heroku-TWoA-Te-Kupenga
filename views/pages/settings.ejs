@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<% include ../partials/header.ejs %>
+	<style type="text/css">
+		
+		.error{
+			color: red !important;
+		}
+
+		.form-control.error{
+			color: #000 !important;
+		}
+
+		.cButton{
+			padding: 0px 7px !important;
+		}
+
+		.card label {
+			color: #000;
+			text-transform: none !important;
+			font-size: 13px !important;
+		}
+
+		.table > thead > tr > th{
+			text-transform: none !important;
+			font-size: 13px !important;
+		}
+
+		.customErrorField{
+			border-color: red;
+		}
+
+		.temper_widget{
+			border-radius: 4px !important;
+			left: 23px !important;
+			bottom: 10px !important;
+		}
+
+		.customErrorLabel{
+			color: red;
+			font-size: 15px;
+		}
+
+		#logoutLink{
+			color: #fff;
+		}
+
+		#logoutLink:hover{
+			color: #1DC7EA;
+		}
+
+	</style>
+</head>
+<body> 
+
+<div class="wrapper">
+    <% include ../partials/nav.ejs %>
+    
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">    
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/settings">Te Kupenga: Settings</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                	<ul class="nav navbar-nav navbar-right">
+                		<li class="dropdown">
+                              <a id="logoutLink" class="btn btn-info btn-fill" href="/settings_logout" >Logout from Settings</a>
+                        </li>
+                    </ul>       
+                </div>
+            </div>
+        </nav>
+        <div class="content" style="background-color: #FFC0CB;">
+            <div class="container-fluid">    
+				<div class="row">
+					<div class="col-md-10" >
+						<%  if (hasOwnProperty("flash")){ %>
+						<% console.log('flash found'); %>
+						<% console.log(flash); %>
+							<% if(flash && flash.error) { %>
+							    <div class="alert alert-danger">
+							        
+							        <%= flash.error %>
+							    </div>
+							<% } %>
+							<% if(flash && flash.success) { %>
+							    <div class="alert alert-success">
+							        
+							        <%= flash.success %>
+							    </div>
+							<% } %>     
+						<% } %>
+
+						<%  if (hasOwnProperty("validation_errors")){ %>
+						 	<div class="alert alert-danger">
+						 		<ul>
+								 	<% validation_errors.forEach(function(error){  %>
+								 		<li><%= error.msg %></li>
+								 	<% }) %>
+							 	</ul>
+						 	</div>
+						<% } %>
+						<div class="card">
+							<div class="header">
+								<h4 class="title">Settings</h4>
+							</div>
+							<div class="content">
+								<ul class="nav nav-tabs" role="tablist">
+								    <li role="presentation" class="active"><a href="#salesforce" aria-controls="salesforce" role="tab" data-toggle="tab">Salesforce</a></li>
+								    <li role="presentation"><a href="#sso" aria-controls="sso" role="tab" data-toggle="tab">SSO</a></li>
+								    <li role="presentation"><a href="#settinglogin" aria-controls="settinglogin" role="tab" data-toggle="tab">Change password</a></li>
+							  	</ul>
+							  	<div class="tab-content">
+								    <div role="tabpanel" class="tab-pane active" id="salesforce">
+								    	<form id="salesforce-setting-form" class="form-horizontal" action="/settings" method="post" novalidate="novalidate" >
+								    		<input type="hidden" name="tab_posted" value="salesforce"/>
+								    		<br/>
+								    		<div class="form-group">
+												<label for="clientid" class="col-sm-2 control-label">Client Id<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="clientid" class="form-control" placeholder="Client Id" value="<%= data ? data.clientid : null %>" id="clientid"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="clientid_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<label for="clientsecret" class="col-sm-2 control-label">Client Secret<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="clientsecret" class="form-control" placeholder="Client Secret" value="<%= data ? data.clientsecret : null %>" id="clientsecret"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="clientsecret_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<label for="redirecturi" class="col-sm-2 control-label">Redirect URI<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="redirecturi" class="form-control" placeholder="Redirect URI" value="<%= data ? data.redirecturi : null %>" id="redirecturi"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="redirecturi_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<label for="loginurl" class="col-sm-2 control-label">Login URL<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="loginurl" value="<%= data ? data.loginurl : null %>" class="form-control" placeholder="Login URL" id="loginurl"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="loginurl_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<label for="accesstoken" class="col-sm-2 control-label">Access Token</label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" disabled="disabled" value="<%= data ? data.accesstoken : null %>" name="accesstoken" class="form-control" placeholder="Access Token" id="accesstoken"/>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="refreshtoken" class="col-sm-2 control-label">Refresh Token</label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" disabled="disabled" value="<%= data ? data.refreshtoken : null %>" name="refreshtoken" class="form-control" placeholder="Refresh Token" id="refreshtoken"/>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="instanceurl" class="col-sm-2 control-label">Instance URL</label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" disabled="disabled" value="<%= data ? data.instanceurl : null %>" name="instanceurl" class="form-control" placeholder="Instance URL" id="instanceurl"/>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="col-sm-offset-2 col-sm-7">
+													<button type="submit" class="btn btn-success btn-fill" style="padding:5px 30px 5px 30px;">Save</button>
+												</div>
+											</div>
+								    	</form>  
+								    </div>
+								    <div role="tabpanel" class="tab-pane" id="sso">
+								    	<form id="sso-setting-form" class="form-horizontal" action="/settings" method="post" novalidate="novalidate">
+								    		<input type="hidden" name="tab_posted" value="sso"/>
+								    		<br/>
+								    		<% if(data.appurl != null){ %>
+								    		<div class="form-group">
+												<label for="signonurl" class="col-sm-2 control-label">Sign-on URL</label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" disabled="disabled" name="signonurl" class="form-control" placeholder="Identity metadata URL" value="<%= data ? data.appurl+'/login' : null %>" id="signonurl"/>
+													<span style="font-size: 10.5px; padding-left: 10px; color: #9A9A9A;">Please apply this url to Azure for Sign-on URL</span>
+												</div>
+											</div>
+											<% } %>
+								    		<div class="form-group">
+												<label for="identitymetadata" class="col-sm-2 control-label">Identity metadata URL<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="identitymetadata" class="form-control" placeholder="Identity metadata URL" value="<%= data ? data.identitymetadata : null %>" id="identitymetadata"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="identitymetadata_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<label for="logincallback" class="col-sm-2 control-label">Reply URL<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="logincallback" class="form-control" placeholder="Login callback" value="<%= data ? data.logincallback : null %>" id="logincallback"/>
+													<span style="font-size: 10.5px; padding-left: 10px; color: #9A9A9A;">Please do not apply / at last</span>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="logincallback_error_holder"></div></div>
+											</div>
+											<div class="form-group" style="display:none;">
+												<label for="logoutcallback" class="col-sm-2 control-label">Logout callback<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="logoutcallback" class="form-control" placeholder="Logout callback" value="<%= data ? data.logoutcallback : null %>" id="logoutcallback"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="logoutcallback_error_holder"></div></div>
+											</div>
+											<div class="form-group" style="display:none;">
+												<label for="issuer" class="col-sm-2 control-label">Issuer<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" name="issuer" value="<%= data ? data.issuer : null %>" class="form-control" placeholder="Issuer" id="issuer"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="issuer_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<label for="appurl" class="col-sm-2 control-label">App Id URI<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="text" value="<%= data ? data.appurl : null %>" name="appurl" class="form-control" placeholder="App URL" id="appurl"/>
+													<span style="font-size: 10.5px; padding-left: 10px; color: #9A9A9A;">Please do not apply / at last</span>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="appurl_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<div class="col-sm-offset-2 col-sm-7">
+													<button type="submit" class="btn btn-success btn-fill" style="padding:5px 30px 5px 30px;">Save</button>
+												</div>
+											</div>
+								    	</form> 
+								    </div>
+								    <div role="tabpanel" class="tab-pane" id="settinglogin">
+								    	<form id="login-setting-form" class="form-horizontal" action="/settings" method="post" novalidate="novalidate">
+								    		<input type="hidden" name="tab_posted" value="settinglogin"/>
+								    		<br/>
+								    		<div class="form-group">
+												<label for="username" class="col-sm-2 control-label">Username</label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<%= data ? data.username : null %>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="currentpassword" class="col-sm-2 control-label">Current password<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="password" name="currentpassword" class="form-control" placeholder="Current password" id="currentpassword"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="currentpassword_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<label for="newpassword" class="col-sm-2 control-label">New password<span class="customErrorLabel">*</span></label>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<input type="password" name="newpassword" class="form-control" placeholder="New password" id="newpassword"/>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5"><div id="newpassword_error_holder"></div></div>
+											</div>
+											<div class="form-group">
+												<div class="col-sm-offset-2 col-sm-7">
+													<button type="submit" class="btn btn-success btn-fill" style="padding:5px 30px 5px 30px;">Save</button>
+												</div>
+											</div>
+								    	</form> 
+								    </div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>    
+        </div>
+        <% include ../partials/footer.ejs %>
+    </div>   
+</div>
+</body>
+
+<% include ../partials/scripts.ejs %>
+<script data-id="tkefuryu" src="https://temper.io/d.js" class="temper" async></script><noscript><a href="https://temper.io">Powered by Temper</a></noscript>
+<script type="text/javascript">
+	$(document).ready(function(){
+
+        $("#salesforce-setting-form").validate({
+
+        	highlight: function(element, errorClass) {
+
+			    $(element).addClass(errorClass);
+			    $(element).addClass('customErrorField');
+			},
+			unhighlight: function(element, errorClass) {
+
+			    $(element).removeClass(errorClass);
+			    $(element).removeClass('customErrorField');
+			},
+
+	        rules: {
+	        	clientid: "required",
+	            clientsecret: "required",
+	            loginurl: "required",
+	            redirecturi: "required"
+	            
+	        },
+		    errorPlacement: function(error, element) {
+		        error.insertAfter("#"+element.attr("id")+"_error_holder");
+		   },
+	        
+	        // Specify the validation error messages
+	        messages: {
+	            clientid: "Client id is required",
+	            clientsecret: "Client secret is required",
+	            loginurl: "Login url is required",
+	            redirecturi: "Redirect URI is required"
+	            
+	        },
+
+	        submitHandler: function(form) {
+	            var cnf = confirm('Are you sure you want to submit this salesforce setting ?');
+
+	        	if(cnf){
+	        		form.submit();	
+	        	}
+	        }
+
+	    });
+
+
+        $("#sso-setting-form").validate({
+
+        	highlight: function(element, errorClass) {
+
+			    $(element).addClass(errorClass);
+			    $(element).addClass('customErrorField');
+			},
+			unhighlight: function(element, errorClass) {
+
+			    $(element).removeClass(errorClass);
+			    $(element).removeClass('customErrorField');
+			},
+
+	        rules: {
+	        	identitymetadata: "required",
+	            logincallback: "required",
+	            appurl: "required"
+	            
+	        },
+		    errorPlacement: function(error, element) {
+		        error.insertAfter("#"+element.attr("id")+"_error_holder");
+		   },
+	        
+	        // Specify the validation error messages
+	        messages: {
+	            identitymetadata: "Identity metadata url is required",
+	            logincallback: "Login callback is required",
+	            appurl: "App url is required"
+	        },
+
+	        submitHandler: function(form) {
+
+	        	var cnf = confirm('Are you sure you want to submit this SSO settings ?');
+
+	        	if(cnf){
+	        		form.submit();	
+	        	}
+	        }
+	    });
+
+ 		$("#login-setting-form").validate({
+
+        	highlight: function(element, errorClass) {
+
+			    $(element).addClass(errorClass);
+			    $(element).addClass('customErrorField');
+			},
+			unhighlight: function(element, errorClass) {
+
+			    $(element).removeClass(errorClass);
+			    $(element).removeClass('customErrorField');
+			},
+
+	        rules: {
+	        	currentpassword: "required",
+	            newpassword: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 20
+                }
+	        },
+		    errorPlacement: function(error, element) {
+		        error.insertAfter("#"+element.attr("id")+"_error_holder");
+		   },
+	        
+	        // Specify the validation error messages
+	        messages: {
+	            currentpassword: "Please provide current password",
+	            newpassword: {
+                    required: "Please provide new password",
+                    minlength: "6 to 20 characters required for password"
+                }
+	        },
+
+	        submitHandler: function(form) {
+
+	        	var cnf = confirm('Are you sure you want to change password ?');
+
+	        	if(cnf){
+	        		form.submit();	
+	        	}
+	        }
+	    });
+
+		$('#settingTabs a').click(function (e) {
+		  e.preventDefault()
+		  $(this).tab('show')
+		})
+        
+	});
+
+</script>
+</html>

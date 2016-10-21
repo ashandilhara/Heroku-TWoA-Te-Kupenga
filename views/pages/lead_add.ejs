@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<% include ../partials/header.ejs %>
+	<style type="text/css">
+		.select2-dropdown{
+			border: 1px solid #E3E3E3;
+		}
+		.select2-container .select2-selection--single{
+			height: 40px;
+		}
+		.select2-container--default .select2-selection--single{
+			border: 1px solid #E3E3E3;
+		}
+		.select2-container .select2-selection--single .select2-selection__rendered{
+			padding-top: 5px;
+			padding-left: 15px;
+		}
+		.select2-container--default .select2-search--dropdown .select2-search__field{
+			border: 1px solid #E3E3E3;
+		}
+		.select2-container--default .select2-selection--single .select2-selection__arrow{
+			height: 40px;
+		}
+		.select2-container--default .select2-selection--single .select2-selection__arrow b{
+			border-color: #000 transparent transparent transparent;
+			border-width: 6px 3px 0 3px;
+		}
+		.error{
+			color: red !important;
+		}
+
+		.form-control.error{
+			color: #000 !important;
+		}
+
+		.cButton{
+			padding: 0px 7px !important;
+		}
+
+		.card label {
+			color: #000;
+			text-transform: none !important;
+			font-size: 13px !important;
+		}
+
+		.table > thead > tr > th{
+			text-transform: none !important;
+			font-size: 13px !important;
+		}
+
+		#studyDetailsListTable th{
+			color: #000;
+		}
+
+		.customErrorField{
+			border-color: red;
+		}
+
+		.temper_widget{
+			border-radius: 4px !important;
+			left: 23px !important;
+			bottom: 10px !important;
+		}
+
+		.customErrorLabel{
+			color: red;
+			font-size: 15px;
+		}
+
+	</style>
+</head>
+<body> 
+
+<div class="wrapper">
+    <% include ../partials/nav.ejs %>
+    
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">    
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/lead">Te Kupenga: Add New EOI</a>
+                </div>
+                <% if(data[1].user) {%>
+	                <div class="collapse navbar-collapse">
+	                	<ul class="nav navbar-nav navbar-right">
+	                		<li class="dropdown">
+	                              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+	                                    Welcome <span style="color: #63d8f1;"><%= data[1].user.givenName %> <%= data[1].user.familyName %></span>
+	                                    <b class="caret"></b>
+	                              </a>
+	                              <ul class="dropdown-menu">
+	                                <li><a href="/logout">Logout</a></li>
+	                              </ul>
+	                        </li>
+	                    </ul>       
+	                </div>
+                <% } %>
+            </div>
+        </nav>
+        <div class="content" style="background-color: #FFFFFF;">
+            <div class="container-fluid">    
+				<form id="lead-form" class="form-horizontal" action="/lead" method="post" novalidate="novalidate">
+					<input type='hidden' id='studyDetailsListTableDataJSON' name='studyDetailsListTableDataJSON' value=''>
+					<input type='hidden' id='takiwa_val' name='takiwa_val' value=''>
+					<div class="row">
+						<div class="col-md-10" >
+							<%  if (hasOwnProperty("flash")){ %>
+								<% if(flash && flash.error) { %>
+								    <div class="alert alert-danger">
+								        
+								        <%= flash.error %>
+								    </div>
+								<% } %>    
+							<% } %>
+
+							<%  if (hasOwnProperty("validation_errors")){ %>
+							 	<div class="alert alert-danger">
+							 		<ul>
+									 	<% validation_errors.forEach(function(error){  %>
+									 		<li><%= error.msg %></li>
+									 	<% }) %>
+								 	</ul>
+							 	</div>
+							<% } %>
+							<div class="card">
+								<div class="header">
+									<h4 class="title">Contact details</h4>
+								</div>
+								<div class="content">
+									<div class="form-group">
+										<label for="salutation" class="col-sm-2 control-label">
+											Title<span class="customErrorLabel">*</span>
+										</label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select id="salutation" name="salutation" class="form-control">
+												<option value=""> Please select </option>
+												<option value="Dr."> Dr. </option>
+												<option value="Miss."> Miss. </option>
+												<option value="Mr."> Mr. </option>
+												<option value="Mrs."> Mrs. </option>
+												<option value="Ms."> Ms. </option>
+												<option value="Sir."> Sir. </option>
+											</select>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="salutation_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="dob_day" class="col-sm-2 control-label">Date of birth</label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select id="dob_day" name="dob_day" class="form-control select-box">
+												<option value=""> Day </option>
+											</select>
+											<select id="dob_month" name="dob_month" class="form-control select-box">
+												<option value=""> Month </option>
+											</select>
+											<select id="dob_year" name="dob_year" class="form-control select-box">
+												<option value=""> Year </option>
+											</select>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="dob_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="first_name" class="col-sm-2 control-label">First name<span class="customErrorLabel">*</span></label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+												<input type="text" name="first_name" class="form-control" placeholder="First Name" id="first_name"/>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="first_name_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="last_name" class="col-sm-2 control-label">Last name<span class="customErrorLabel">*</span></label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+												<input type="text" name="last_name" class="form-control" placeholder="Last Name" id="last_name"/>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="last_name_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="email_id" class="col-sm-2 control-label">Email address</label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<input type="email" name="email" class="form-control" id="email" placeholder="Email">
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="email_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="phone" class="col-sm-2 control-label">Phone number</label>
+										<div class="col-sm-2 col-md-2 col-lg-2">
+											<select id="area_code1" name="area_code1" class="form-control select-box">
+												<option value=""> Area code </option>
+											</select>	
+										</div>
+										<div class="col-sm-3 col-md-3 col-lg-3">
+												<input type="text" name="phone" placeholder="Phone Number" class="form-control" id="phone"/>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="phone_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="other_phone" class="col-sm-2 control-label">Other phone</label>
+										<div class="col-sm-2 col-md-2 col-lg-2">
+											<select id="area_code2" name="area_code2" class="form-control select-box">
+												<option value=""> Area code </option>
+											</select>	
+										</div>
+										<div class="col-sm-3 col-md-3 col-lg-3">
+												<input type="text" name="other_phone" placeholder="Other Phone" class="form-control" id="other_phone"/>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="other_phone_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="address" class="col-sm-2 control-label">Address</label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<div id="locationField">
+									      		<input id="autocomplete" class="form-control" placeholder="Enter your address" onFocus="geolocate()" type="text"></input>
+									    	</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-2 col-md-2 col-lg-2">
+											<input class="form-control field" placeholder="Street number" id="street_number" name="street_number" disabled="true"></input>
+										</div>
+										<div class="col-sm-3 col-md-3 col-lg-3">
+											<input class="form-control field" id="route" name="route" placeholder="Route" disabled="true"></input>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-5 col-md-5 col-lg-5">
+											<input class="form-control field" id="locality" name="locality" placeholder="City" disabled="true"></input>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-3 col-md-3 col-lg-3">
+											<input class="form-control field" placeholder="State" id="administrative_area_level_1" name="administrative_area_level_1" disabled="true"></input>
+										</div>
+										<div class="col-sm-2 col-md-2 col-lg-2">
+											<input class="form-control field" id="postal_code" name="postal_code" placeholder="Postal code" disabled="true"></input>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-5 col-md-5 col-lg-5">
+											<input class="form-control field" id="country" name="country" placeholder="Country" disabled="true"></input>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card  highlight-section" style="display:none;">
+								<div class="header">
+									<h4 class="title">Additional information</h4>
+								</div>
+								<div class="content">
+									<div class="form-group" id="firstAdditionalType">
+										<label for="additional_type" class="col-sm-2 control-label"> Type</label>
+										<div class="col-sm-10 col-md-10 col-lg-10">
+											<div  class="col-md-5 col-sm-5">
+												<select class="form-control" name="additional_type"/>
+													<option value=""> Please select </option>
+													<% data[0].additionalInformationTypes.forEach(function(record){ %>
+														<option value="<%= record.value %>"> <%= record.label %> </option>
+													<% }) %>
+												</select>
+											</div>
+											<div class="col-md-5 col-sm-5">
+												<input type="text" name="additionalInformationTypeInput" class="form-control"/>
+											</div>
+											<div class="col-md-2 col-sm-2">
+												<a  onclick="removeRow(this);" style="color:blue; text-decoration: underline;" href="javascript:void(0);"><i class="fa fa-minus-circle"></i>Remove</a>
+											</div>
+										</div>
+									</div>
+									<div id="additional_type_wrapper">
+									</div>
+									<div class="col-md-12 col-sm-12">
+										<a onclick="addNewRow();" style="color:blue; text-decoration: underline;" href="javascript:void(0);"><i class="fa fa-plus-circle"></i>Add additional information</a>
+									</div>	
+								</div>
+							</div>
+							
+							<div class="card">
+								<div class="header">
+									<h4 class="title">Study details</h4>
+								</div>
+								<div class="content">
+									<div class="form-group">
+										<label for="takiwa" class="col-sm-2 control-label"> Takiwā<span class="customErrorLabel">*</span></label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select class="form-control" id="takiwa" name="takiwa" onchange="loadLocationData(this.value);"/>
+												<option value=""> Please select </option>
+												
+											</select>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="takiwa_error_holder"></div></div>
+										<div id="takiwa_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+									<div class="form-group">
+										<label for="location" class="col-sm-2 control-label"> Location<span class="customErrorLabel">*</span></label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select class="form-control" id="location" name="location" onchange="loadProgrammeData()"/>
+												<option value=""> Please select </option>
+												
+											</select>
+										</div>
+										<div id="location_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+									<div class="form-group">
+										<label for="first_name" class="col-sm-2 control-label"> Area of interest </label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select class="form-control" id="area_of_interest" name="area_of_interest" onchange="loadProgrammeData()"/>
+												<option value=""> Please select </option>
+											</select>
+										</div>
+										<div id="area_of_interest_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+									<div class="form-group">
+										<label for="programme" class="col-sm-2 control-label"> Programme<span class="customErrorLabel">*</span></label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select class="form-control" id="programme" name="programme" />
+												<option value=""> Please select </option>
+											</select>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="programme_error_holder"></div></div>
+										<div id="programme_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+									<div class="form-group" style="display:none;">
+										<label for="kaiako" class="col-sm-2 control-label"> Program contact </label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<div style="padding-top:5px;" id="kaiako"></div>
+										</div>
+										<div id="kaiako_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+
+									<div class="form-group">
+										<label for="commencing_studies" class="col-sm-2 control-label"> Commencing studies	</label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select class="form-control" id="commencing_studies" name="commencing_studies"/>
+												<option value=""> Please select </option>
+											</select>
+										</div>
+										<div id="commencing_studies_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+									</br>
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-sm-5 col-md-5 col-lg-5">
+											<button type="button" onclick="addRowToList();" class="btn btn-info btn-fill" style="padding:5px 30px 5px 30px;">Add to selected interest list</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="card">
+								<div class="header">
+									<h4 class="title">Selected interests / programmes</h4>
+								</div>
+								<div class="content table-responsive table-full-width">
+									<table id="studyDetailsListTable" class="table table-hover table-striped">
+	                                    <thead>
+	                                        <tr>
+		                                    	<th>Takiwā</th>
+		                                    	<th>Location</th>
+		                                    	<th>Area of interest</th>
+		                                    	<th>Programme</th>
+		                                    	<th>Commencing studies</th>
+		                                    	<th>Action</th>
+	                                    	</tr>
+	                                    </thead>
+	                                    <tbody id="studyDetailsList">
+	                                        <tr id="defaultRow">
+	                                        	<td colspan="7">No rows added</td>
+	                                        </tr>
+	                                    </tbody>
+	                                </table>
+								</div>
+							</div>
+						
+							<div class="card  highlight-section">
+								<div class="header">
+									<h4 class="title">Marketing information</h4>
+								</div>
+								<div class="content">
+									<div class="form-group">
+										<label for="engagementMethod" class="col-sm-3 control-label"> Engagement method </label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select class="form-control" id="enagement_method_value" name="enagement_method_value"> 
+												<option value=""> Please select </option>
+											</select>
+										</div>
+										<div id="enagement_method_value_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+									<div class="form-group">
+										<label for="campaigns" class="col-sm-3 control-label"> Event </label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<select class="form-control" id="campaigns" name="campaigns" > 
+												<option value=""> Search or select event </option>
+											</select>
+										</div>
+										<div id="campaigns_loader" class="col-sm-2" style="padding-left:0px; display:none;"><img style="padding-top:10px;" src="/img/ajax-loader.gif"> </div>
+									</div>
+									<div class="form-group">
+										<label for="other_marketing_information" class="col-sm-3 control-label">Other (please specify)</label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<input type="text" class="form-control" id="other_marketing_information" name="other_marketing_information"/>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+							
+							<div class="card">
+								<input type="hidden" id="followupCallValueBy" name="followupCallValueBy"/>
+								<input type="hidden" id="followupCallValueTime" name="followupCallValueTime"/>
+								<div class="header">
+									<h4 class="title">Schedule a follow-up action</h4>
+								</div>
+								<div class="content">
+									<div class="form-group">
+										<div class="col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-md-4 col-lg-4">
+											<label>
+												<input type="radio" id="call_tatu" name="followup_call_by" class="followup_call_option" onchange="setFollowupCallValueBy('Call back by Tatau Pounamu');"> Call back by Tatau Pounamu
+											</label>
+										</div>
+										<div class="col-sm-4 col-md-4 col-lg-4">
+											<label>
+												<input type="radio" id="call_asap" name="followup_call_time"  class="followup_call_option" onchange="setFollowupCallValueTime('Call back as soon as possible');"> Call back as soon as possible
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-md-4 col-lg-4">
+											<label>
+												<input type="radio" id="call_kaiako" name="followup_call_by" class="followup_call_option" onchange="setFollowupCallValueBy('Assigned EOI To Kaimahi');"> Assign EOI to kaimahi
+											</label>
+										</div>
+										<div class="col-sm-4 col-md-4 col-lg-4">
+											<label>
+												<input type="radio" id="callback_5_days" name="followup_call_time" class="followup_call_option" onchange="setFollowupCallValueTime('Call back in 5 days');"> Call back in 5 days
+											</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<div id="kaimahiNameDiv" style="display: none;">
+											<label for="first_name" class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2  col-sm-2 control-label"> Kaimahi name </label>
+											<div class="col-sm-4 col-md-4 col-lg-4">
+												<select class="form-control" id="kaimahiName" name="kaimahiName" style="width: 100%;"/>
+													<option value=""> Please select </option>
+													
+												</select>
+											</div>
+										</div>
+										<div id="callBackIn10DaysDiv" class="col-sm-offset-8 col-md-offset-8 col-lg-offset-8 col-sm-4 col-md-4 col-lg-4">
+											<label>
+												<input type="radio" id="callback_10_days" name="followup_call_time" class="followup_call_option" onchange="setFollowupCallValueTime('Call back in 10 days');"> Call back in 10 days
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="card">
+								<div class="header">
+									<h4 class="title">Send brochures and enrolment pack</h4>
+								</div>
+								<div class="content">
+									<input type="hidden" id="sendBrochuresValue" name="sendBrochuresValue" />
+									<input type="hidden" id="deliveryDaysValue" name="deliveryDaysValue" />
+									<div class="form-group">
+										<div class="col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-sm-4 col-md-4 col-lg-4">
+											<div>
+												<label>
+													<input type="checkbox" name="send_by" onchange="setSendBrochuresValue('Send by email', this.checked);"> Send by email
+												</label>
+											</div>
+										</div>
+										<div class="col-sm-4 col-md-4 col-lg-4">
+											<div >
+												<label>
+													<input type="radio" name="send_in" class="send_pack" onchange="setDeliveryDaysValue('Send immediately');"> Send immediately 
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-4 col-md-offset-4 col-lg-offset-4 ccol-sm-4 col-md-4 col-lg-4">
+											<div>
+												<label>
+													<input type="checkbox" name="send_by" class="send_pack" onchange="setSendBrochuresValue('Send by post', this.checked);"> Send by post
+												</label>
+											</div>
+										</div>
+										<div class="ccol-sm-4 col-md-4 col-lg-4">
+											<div >
+												<label>
+													<input type="radio" name="send_in" class="send_pack" onchange="setDeliveryDaysValue('Send in 5 days');"> Send in 5 days
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-8 col-md-offset-8 col-lg-offset-8 col-sm-4 col-md-4 col-lg-4">
+											<div >
+												<label>
+													<input type="radio" name="send_in" onchange="setDeliveryDaysValue('Send in 10 days');"> Send in 10 days
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card highlight-section">
+								<div class="header">
+									<h4 class="title">Additional comments</h4>
+								</div>
+								<div class="content">
+									<div class="form-group">
+										<div class="col-sm-12 col-md-12">
+											<label for="additional_comment" class="col-sm-3  col-md-3 control-label"> Any additional comments</label>
+											<div class="col-sm-9 col-md-9 col-lg-9">
+												<textarea class="form-control" id="additional_comment" name="additional_comment" placeholder="Notes" rows="5"></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-5 col-sm-7">
+									<button id="leadSubmitButton" onclick="postTableData();" type="button" class="btn btn-success btn-fill" style="padding:5px 30px 5px 30px;">Submit</button>
+								</div>
+							</div>
+						</div>
+					</div>
+                </form>                        
+            </div>    
+        </div>
+        <% include ../partials/footer.ejs %>
+    </div>   
+</div>
+</body>
+
+<% include ../partials/scripts.ejs %>
+<script data-id="tkefuryu" src="https://temper.io/d.js" class="temper" async></script><noscript><a href="https://temper.io">Powered by Temper</a></noscript>
+<!-- <script data-id="oldwnclo" src="https://temper.io/d.js" class="temper" async></script><noscript>Powered by temper</noscript> -->
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$('#leadSubmitButton').prop('disabled', true);
+
+        $("#lead-form").validate({
+
+        	highlight: function(element, errorClass) {
+
+        		if ($(element).attr("name") == "programme"){
+			    	$('#select2-programme-container').parent().css('border-color', 'red');        			
+        		}
+
+			    $(element).addClass(errorClass);
+			    $(element).addClass('customErrorField');
+			},
+			unhighlight: function(element, errorClass) {
+
+				if ($(element).attr("name") == "programme"){
+			    	$('#select2-programme-container').parent().css('border-color', '#E3E3E3');
+			    	$("#programme-error").html('');        		
+        		}
+			    $(element).removeClass(errorClass);
+			    $(element).removeClass('customErrorField');
+			},
+
+			ignore: 'input[type=hidden], .select2-input, .select2-focusser',
+    
+        	// Specify the validation rules
+	        rules: {
+	        	salutation: "required",
+	            first_name: "required",
+	            last_name: "required",
+	            programme: "required",
+	            takiwa: "required",
+				location: "required",
+	            email: {
+	                email: true
+	            }
+	            
+	        },
+		    errorPlacement: function(error, element) {
+		        error.insertAfter("#"+element.attr("id")+"_error_holder");
+		   },
+	        
+	        // Specify the validation error messages
+	        messages: {
+	            salutation: "Please select title",
+	            first_name: "Please provide first name",
+	            last_name: "Please provide last name",
+	            programme: "Please select a programme",
+	            takiwa: "Please select a takiwā",
+				location: "Please select a location",
+	            email: {
+	            	email: "Please provide a valid email address"
+	            }
+	            
+	        },
+	        //errorElement : 'div',
+    		//errorLabelContainer: '.error_holder',
+	        
+	        submitHandler: function(form) {
+	            form.submit();
+	        }
+
+
+	    });
+
+		loadAreaCodeData();
+	    addOption_list();
+	    loadCommencingStudyData();
+	    loadProgrammeData();
+	    loadTakiwaData();
+	    loadAreaOfInterestData();
+	    loadLocationData('');
+	    loadKaimahiNameData();
+	    loadEngagementMethodData();
+	    loadCampaignData();
+
+	    $('#location').select2();
+
+	    var $select = $('#programme').select2({
+		    placeholder: ' Please Select ',
+		    allowClear: true
+		});
+
+		$select.on('change', function() {
+	    	$(this).trigger('blur');
+	  	});
+
+	    $('#campaigns').select2();
+	    $('#kaimahiName').select2();
+
+	    $select.rules('add', 'required');
+        
+	});
+
+
+	function addOptionForDOB(selectbox, text, value) {
+	    var optn = document.createElement("option");
+	    optn.text = text;
+	    optn.value = value;
+	    selectbox.options.add(optn);
+	}
+
+	function addOption_list() {
+
+	    for (var i=1; i <= 31; ++i) {
+	        addOptionForDOB(document.getElementById('dob_day'),i,i);
+	    }
+
+	    for (var i=1; i <= 12;++i) {
+	        addOptionForDOB(document.getElementById('dob_month'),i,i);
+	    }
+
+	    var today=new Date();
+    	var thisyear = today.getFullYear();
+
+	    for (var i=1900; i <= thisyear; ++i) {
+	        addOptionForDOB(document.getElementById('dob_year'),i,i);
+	    }
+	}
+
+	function addNewRow(){
+		//var element = document.getElementsByClass('firstAdditionalType')[0];
+		$( "#firstAdditionalType" ).clone().appendTo( "#additional_type_wrapper" );
+	}
+
+	function removeRow(element){
+		//console.log($(element).parent());
+		$(element).parent().parent().parent().remove();
+	}
+
+	function loadTakiwaData(){
+		$('#takiwa_loader').show();
+		$.ajax({
+		    type: "POST",
+		    url: '/loadTakiwaData',
+		    dataType:'json',
+		    success: function(data) {
+
+		       var select = $("#takiwa"), options = '';
+		       select.empty();
+
+
+		       //console.log(data);
+		       options += "<option value=''> Please select </option>";
+		       for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+
+		       select.append(options);
+		       $('#takiwa_loader').hide();
+		    }
+		});
+	}
+
+	function loadLocationData(takiwa){
+		
+		$('#select2-location-container').attr('title','Please select');      
+		$('#select2-location-container').html('Please select');
+
+		//console.log('takiwa='+takiwa);
+
+			loadProgrammeData();	
+		
+		$('#location_loader').show();
+		$.ajax({
+		    type: "POST",
+		    url: '/loadLocationData',
+		    data: {'takiwa': takiwa},
+		    dataType:'json',
+		    success: function(data) {
+
+		       var select = $("#location"), options = '';
+		       select.empty();      
+
+		       //console.log(data);
+		       options += "<option value=''> Please select </option>";
+		       for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+		       select.append(options);
+		       $('#location_loader').hide();
+		    }
+		});
+		
+	}
+
+	function loadCommencingStudyData(){
+		$('#commencing_studies_loader').show();
+		$.ajax({
+		    type: "POST",
+		    url: '/loadCommencingStudyData',
+		    dataType:'json',
+		    success: function(data) {
+
+		       var select = $("#commencing_studies"), options = '';
+		       select.empty();      
+
+		       //console.log(data);
+		       
+		       options += "<option value=''> Please select </option>";
+		       for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+		       //console.log('options======'+options);
+		       select.append(options);
+		       $('#commencing_studies_loader').hide();
+		    }
+		});
+	}
+
+	function loadAreaOfInterestData(){
+		$('#area_of_interest_loader').show();
+		$.ajax({
+		    type: "POST",
+		    url: '/loadAreaOfInterestData',
+		    dataType:'json',
+		    success: function(data) {
+		    	var select = $("#area_of_interest"), options = '';
+
+		       //console.log('loadAreaOfInterestData-'+data);
+		       	select.empty();
+
+	       		options += "<option value=''> Please select </option>";
+	       		for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+
+		       select.append(options);
+		       $('#area_of_interest_loader').hide();
+		    }
+		});
+	}
+
+	function loadKaiakoData(programme_id){
+		
+		//console.log(programme_id);
+		if(programme_id != ''){
+			$('#kaiako_loader').show();
+			$.ajax({
+			    type: "POST",
+			    url: '/loadKaiakoData',
+			    data: {'Id': programme_id},
+			    dataType:'json',
+			    success: function(data) {
+
+				   $('#kaiako').html(data[0].name);
+			       $('#kaiako_loader').hide();
+			    }
+			});
+		}
+		else{
+			$('#kaiako').html('');
+		}
+	}
+
+	function loadProgrammeData(){
+		$('#select2-programme-container').attr('title','Please select');      
+		$('#select2-programme-container').html('Please select');
+		$('#kaiako').html('');
+		var location = document.getElementById('location').value;
+		var area_of_interest = document.getElementById('area_of_interest').value;
+		//console.log(location);
+		//console.log(area_of_interest);
+		$('#programme_loader').show();
+		$.ajax({
+		    type: "POST",
+		    url: '/loadProgrammeData',
+		    data: {'location': location, 'area_of_interest': area_of_interest},
+		    dataType:'json',
+		    success: function(data) {
+
+		    	//console.log('---------------programmes = '+data);
+
+		       var select = $("#programme"), options = '';
+
+		       //console.log(data);
+		       	select.empty();
+
+	       		options += "<option value=''> Please select </option>";
+	       		for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+
+		       select.append(options);
+		       $('#programme_loader').hide();
+		    }
+		});
+	}
+
+
+	function loadCampaignData(){
+		$('#campaigns_loader').show();
+		$.ajax({
+		    type: "POST",
+		    url: '/loadCampaignData',
+		    dataType:'json',
+		    success: function(data) {
+
+		       var select = $("#campaigns"), options = '';
+		       select.empty();      
+
+		       //console.log(data);
+		       options += "<option value=''> Please select </option>";
+		       for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+
+		       select.append(options);
+		       $('#campaigns_loader').hide();
+		    }
+		});
+	}
+
+	function loadAreaCodeData(){
+		$.ajax({
+		    type: "POST",
+		    url: '/loadAreaCodeData',
+		    dataType:'json',
+		    success: function(data) {
+
+		       var select = $("#area_code1"), options = '';
+		       select.empty();
+
+		       var selecta2 = $("#area_code2");
+		       selecta2.empty();
+
+		       //console.log('AreaCode===='+data);
+		       options += "<option value=''> Area code </option>";
+		       for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+		       select.append(options);
+		       selecta2.append(options);
+		    }
+		});
+	}
+
+	function loadKaimahiNameData(){
+		$.ajax({
+		    type: "POST",
+		    url: '/loadKaimahiNameData',
+		    dataType:'json',
+		    success: function(data) {
+
+		       var select = $("#kaimahiName"), options = '';
+		       select.empty();      
+
+		       //console.log('kaimahiName===='+data);
+		       options += "<option value=''> Please select </option>";
+		       for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+
+		       select.append(options);
+		    }
+		});
+	}
+
+	function loadEngagementMethodData(){
+		$('#enagement_method_value_loader').show();
+		$.ajax({
+		    type: "POST",
+		    url: '/loadEngagementMethodData',
+		    dataType:'json',
+		    success: function(data) {
+
+		       var select = $("#enagement_method_value"), options = '';
+		       select.empty();      
+
+		       //console.log('enagement_method_value===='+data);
+		       options += "<option value=''> Please select </option>";
+		       for(var i=0;i<data.length; i++)
+		       {
+		        options += "<option value='"+data[i].value+"'>"+ data[i].label +"</option>";              
+		       }
+
+		       select.append(options);
+		       $('#enagement_method_value_loader').hide();
+		    }
+		});
+	}
+
+	function setFollowupCallValueBy(val){
+		if(val == 'Assigned EOI To Kaimahi'){
+			$('#kaimahiNameDiv').show();
+			if($('#callBackIn10DaysDiv').hasClass('col-sm-offset-8 col-md-offset-8 col-lg-offset-8')){
+				$('#callBackIn10DaysDiv').removeClass('col-sm-offset-8 col-md-offset-8 col-lg-offset-8');	
+			}
+			
+		}
+		else{
+			$('#kaimahiNameDiv').hide();
+			if(!$('#callBackIn10DaysDiv').hasClass('col-sm-offset-8 col-md-offset-8 col-lg-offset-8')){
+				$('#callBackIn10DaysDiv').addClass('col-sm-offset-8 col-md-offset-8 col-lg-offset-8');	
+			}
+		}
+		document.getElementById('followupCallValueBy').value = val;
+	}
+
+	function setFollowupCallValueTime(val){
+		document.getElementById('followupCallValueTime').value = val;
+	}
+
+	function setSendBrochuresValue(val, check){
+		var temp = document.getElementById('sendBrochuresValue').value;
+		if(check == true){
+			if(temp == ''){
+				document.getElementById('sendBrochuresValue').value = val;
+			}
+			else if(temp == 'Send by email' && temp != val){
+
+				document.getElementById('sendBrochuresValue').value = temp+';'+val;
+			}
+			else if(temp == 'Send by post' && temp != val){
+
+				document.getElementById('sendBrochuresValue').value = temp+';'+val;
+			}
+		}
+		else{
+			
+			if((temp == 'Send by email;Send by post' || temp == 'Send by post;Send by email')  && val == 'Send by email'){
+
+				document.getElementById('sendBrochuresValue').value = 'Send by post';
+			}
+			else if((temp == 'Send by email;Send by post' || temp == 'Send by post;Send by email') && val == 'Send by post'){
+
+				document.getElementById('sendBrochuresValue').value = 'Send by email';
+			}
+			else if(temp == 'Send by email' && temp == val){
+
+				document.getElementById('sendBrochuresValue').value = '';
+			}
+			else if(temp == 'Send by post' && temp == val){
+
+				document.getElementById('sendBrochuresValue').value = '';
+			}
+		}
+	}
+
+	function setDeliveryDaysValue(val){
+		document.getElementById('deliveryDaysValue').value = val;
+	}
+
+	function addRowToList(){
+		if($('#programme').val() != '' && $('#programme').val() != 'undefined' && $('#programme').val() != null && $('#takiwa').val() != '' && $('#takiwa').val() != 'undefined' && $('#takiwa').val() != null && $('#location').val() != '' && $('#location').val() != 'undefined' && $('#location').val() != null){
+			var row = '<tr class="originalRow">';
+			row += '<td>'+$('#takiwa').val();+'</td>';
+			if($('#location').val() == ''){
+				row += '<td><input type="hidden" value=""/></td>';
+			}
+			else{
+				row += '<td><input type="hidden" value="'+$('#location').val()+'"/>'+$("#location option:selected").text();+'</td>';
+			}
+			row += '<td>'+$('#area_of_interest').val();+'</td>';
+			if($('#programme').val() == ''){
+				row += '<td><input type="hidden" value=""/></td>';
+			}
+			else{
+				row += '<td><input type="hidden" value="'+$('#programme').val()+'"/>'+$("#programme option:selected").text();+'</td>';
+			}
+			//row += '<td>'+$('#kaiako').html();+'</td>';
+			row += '<td>'+$('#commencing_studies').val();+'</td>';
+			row += '<td><button type="button" onclick="removeRowFromList(this);" class="btn btn-danger btn-fill cButton">X</button></td>';
+			row += '</tr>';
+			
+			$('#defaultRow').remove();
+			$('#studyDetailsList').append(row);
+			$('#leadSubmitButton').prop('disabled', false);
+
+			if($('#studyDetailsListTable tbody tr').length != 0){
+				document.getElementById('takiwa_val').value = $('#studyDetailsListTable tbody tr:last-child').find('td:nth-child(1)').html();
+			}
+		}
+		else{
+			//alert('Please select a programme and takiwā first !');
+					$.notify({	
+		// options
+		message: 'Please ensure takiwā, location and programme are selected!' },{
+		// settings
+		type: 'danger',
+		placement: {
+		from: "top",
+		align: "center"
+		}
+		});
+			//alert('Please ensure location and programme are selected!');
+			
+			return false;
+		}
+	}
+
+	function removeRowFromList(element){
+		$(element).parent().parent().remove();
+
+		var count_rows = 0;
+		$('#studyDetailsListTable tbody tr.originalRow').each(function(index, element) {
+			 count_rows++;
+		});
+
+		if(count_rows == 0){
+			$('#leadSubmitButton').prop('disabled', true);
+		}
+
+		if($('#studyDetailsListTable tbody tr').length != 0){
+			document.getElementById('takiwa_val').value = $('#studyDetailsListTable tbody tr:last-child').find('td:nth-child(1)').html();	
+		}
+	}
+
+	function postTableData(){
+		var tableValues= [];
+		var celValues= {};
+		$('#studyDetailsListTable tbody tr.originalRow').each(function(index, element) {
+			 celValues= {};
+			 celValues.takiwa = $(element).find('td:nth-child(1)').html();
+			 celValues.location = $(element).find('td:nth-child(2)').find('input').val();
+			 celValues.area_of_interest = $(element).find('td:nth-child(3)').html();
+			 celValues.programme = $(element).find('td:nth-child(4)').find('input').val();
+			 //celValues.kaiako = $(element).find('td:nth-child(5)').html();
+			 celValues.commencing_studies = $(element).find('td:nth-child(5)').html();
+			 
+			 tableValues.push(celValues);
+		})
+		//console.log('tableValues='+tableValues);
+
+		if(tableValues != ''){
+			$("#studyDetailsListTableDataJSON").val(JSON.stringify(tableValues));	
+		}
+		else{
+			$("#studyDetailsListTableDataJSON").val('');
+		}
+
+		if(document.getElementById('dob_month').value != '' && document.getElementById('dob_day').value != '' && document.getElementById('dob_year').value !=''){
+			var dateEntered = document.getElementById('dob_month').value+'-'+document.getElementById('dob_day').value+'-'+document.getElementById('dob_year').value;
+
+			//console.log(dateEntered);
+
+			if (!moment(dateEntered,'MM-DD-YYYY').isValid()) {
+			  //console.log('Invalid Date');
+			  document.getElementById("dob_day").focus();
+			  alert('You have selected invalid date!');
+			} else {
+			  //console.log('Valid Date');
+
+			  //console.log('studyDetailsListTableDataJSON='+$("#studyDetailsListTableDataJSON").val());
+			  if($("#studyDetailsListTableDataJSON").val() == null || $("#studyDetailsListTableDataJSON").val() == ''){
+			  	alert('Please add at least one row in "Selected interests List" !');
+			  }
+			  else{
+			  	$( "#lead-form" ).submit();
+			  }
+			}
+		}
+		else{
+			//console.log('studyDetailsListTableDataJSON='+$("#studyDetailsListTableDataJSON").val());
+			if($("#studyDetailsListTableDataJSON").val() == null || $("#studyDetailsListTableDataJSON").val() == ''){
+		  		alert('Please add at least one row in "Selected interests List" !');
+		  	}
+		  	else{
+		  		$( "#lead-form" ).submit();
+		  	}
+		}
+	}	
+
+</script>
+<script>
+// This example displays an address form, using the autocomplete feature
+// of the Google Places API to help users fill in the information.
+
+var placeSearch, autocomplete;
+var componentForm = {
+  street_number: 'short_name',
+  route: 'long_name',
+  locality: 'long_name',
+  administrative_area_level_1: 'short_name',
+  country: 'long_name',
+  postal_code: 'short_name'
+};
+
+function initAutocomplete() {
+  // Create the autocomplete object, restricting the search to geographical
+  // location types.
+  autocomplete = new google.maps.places.Autocomplete(
+      /** @type {!HTMLInputElement} */(document.getElementById('autocomplete')),
+      {types: ['geocode']});
+
+  // When the user selects an address from the dropdown, populate the address
+  // fields in the form.
+  autocomplete.addListener('place_changed', fillInAddress);
+}
+
+// [START region_fillform]
+function fillInAddress() {
+  // Get the place details from the autocomplete object.
+  var place = autocomplete.getPlace();
+
+  for (var component in componentForm) {
+    document.getElementById(component).value = '';
+    document.getElementById(component).disabled = false;
+  }
+
+  // Get each component of the address from the place details
+  // and fill the corresponding field on the form.
+  for (var i = 0; i < place.address_components.length; i++) {
+    var addressType = place.address_components[i].types[0];
+    if (componentForm[addressType]) {
+      var val = place.address_components[i][componentForm[addressType]];
+      document.getElementById(addressType).value = val;
+    }
+  }
+}
+// [END region_fillform]
+
+// [START region_geolocation]
+// Bias the autocomplete object to the user's geographical location,
+// as supplied by the browser's 'navigator.geolocation' object.
+function geolocate() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var geolocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      var circle = new google.maps.Circle({
+        center: geolocation,
+        radius: position.coords.accuracy
+      });
+      autocomplete.setBounds(circle.getBounds());
+    });
+  }
+}
+// [END region_geolocation]
+
+    </script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsZmLsianG6tOtzqSkPfUvm9fn37800Kg&signed_in=true&libraries=places&callback=initAutocomplete" async defer></script>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<% include ../partials/header.ejs %>
+    <style>
+        #logoutLink{
+            color: #fff;
+        }
+
+        #logoutLink:hover{
+            color: #1DC7EA;
+        }
+
+    </style>
+</head>
+<body> 
+
+<div class="wrapper">
+    <% include ../partials/nav.ejs %>
+    
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">    
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Install Database Tables</a>
+                </div>
+            </div>
+        </nav>
+        <div class="content">
+            <div class="container-fluid">    
+				<div style="margin-left: 15px; color: red;">Please click the below button to run the script !</div>
+				</br>
+				<div class="form-group pull-left">
+					<div class="col-sm-7">
+                        <form action="/run" method="post" class="form-horizontal">
+    						<button type="submit" class="btn btn-success btn-fill">Run Script</a>
+                        </form>
+					</div>
+				</div>                        
+            </div>    
+        </div>
+        
+        <% include ../partials/footer.ejs %>
+        
+    </div>   
+</div>
+
+</body>
+
+<% include ../partials/scripts.ejs %>
+
+</html>

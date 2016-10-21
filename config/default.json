@@ -1,0 +1,8 @@
+{
+  "main": {
+    "dbConfig": {
+      "url": "postgres://u18ekfljturidi:pcncc1lfh3v2c1687btlo7r4p68@ec2-79-125-118-138.eu-west-1.compute.amazonaws.com:5592/dmdj9hi2d5mio?ssl=true",
+      "identifier":"tekupenga"
+    }
+  }
+}

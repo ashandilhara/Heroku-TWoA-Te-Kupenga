@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<% include ../partials/header.ejs %>
+	<style type="text/css">
+		
+		.error{
+			color: red !important;
+		}
+
+		.form-control.error{
+			color: #000 !important;
+		}
+
+		.cButton{
+			padding: 0px 7px !important;
+		}
+
+		.card label {
+			color: #000;
+			text-transform: none !important;
+			font-size: 13px !important;
+		}
+
+		.table > thead > tr > th{
+			text-transform: none !important;
+			font-size: 13px !important;
+		}
+
+		.customErrorField{
+			border-color: red;
+		}
+
+		.temper_widget{
+			border-radius: 4px !important;
+			left: 23px !important;
+			bottom: 10px !important;
+		}
+
+		.customErrorLabel{
+			color: red;
+			font-size: 15px;
+		}
+
+	</style>
+</head>
+<body> 
+
+<div class="wrapper">
+    <% include ../partials/nav.ejs %>
+    
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">    
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/settings">Te Kupenga: Settings Login</a>
+                </div>
+            </div>
+        </nav>
+        <div class="content" style="background-color: #FFC0CB;">
+            <div class="container-fluid">    
+				<div class="row">
+					<div class="col-md-10" >
+						<%  if (hasOwnProperty("flash")){ %>
+						<% console.log('flash found'); %>
+						<% console.log(flash); %>
+							<% if(flash && flash.error) { %>
+							    <div class="alert alert-danger">
+							        
+							        <%= flash.error %>
+							    </div>
+							<% } %>
+							<% if(flash && flash.success) { %>
+							    <div class="alert alert-success">
+							        
+							        <%= flash.success %>
+							    </div>
+							<% } %>     
+						<% } %>
+
+						<%  if (hasOwnProperty("validation_errors")){ %>
+						 	<div class="alert alert-danger">
+						 		<ul>
+								 	<% validation_errors.forEach(function(error){  %>
+								 		<li><%= error.msg %></li>
+								 	<% }) %>
+							 	</ul>
+						 	</div>
+						<% } %>
+						<div class="card">
+							<div class="header">
+								<h4 class="title">Settings Login</h4>
+							</div>
+							<div class="content">
+						    	<form id="setting-login-form" class="form-horizontal" action="/settings_login" method="post" novalidate="novalidate">
+						    		<br/>
+						    		<div class="form-group">
+										<label for="username" class="col-sm-2 control-label">Username<span class="customErrorLabel">*</span></label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<input type="text" name="username" value="<%= data ? data.username : null %>" class="form-control" placeholder="Username" id="username"/>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="username_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<label for="password" class="col-sm-2 control-label">Password<span class="customErrorLabel">*</span></label>
+										<div class="col-sm-5 col-md-5 col-lg-5">
+											<input type="password" name="password" class="form-control" placeholder="Password" id="password"/>
+										</div>
+										<div class="col-sm-5 col-md-5 col-lg-5"><div id="password_error_holder"></div></div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-sm-7">
+											<button type="submit" class="btn btn-success btn-fill" style="padding:5px 30px 5px 30px;">Login</button>
+										</div>
+									</div>
+						    	</form> 
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>    
+        </div>
+        <% include ../partials/footer.ejs %>
+    </div>   
+</div>
+</body>
+
+<% include ../partials/scripts.ejs %>
+<script data-id="tkefuryu" src="https://temper.io/d.js" class="temper" async></script><noscript><a href="https://temper.io">Powered by Temper</a></noscript>
+<script type="text/javascript">
+	$(document).ready(function(){
+
+        $("#setting-login-form").validate({
+
+        	highlight: function(element, errorClass) {
+
+			    $(element).addClass(errorClass);
+			    $(element).addClass('customErrorField');
+			},
+			unhighlight: function(element, errorClass) {
+
+			    $(element).removeClass(errorClass);
+			    $(element).removeClass('customErrorField');
+			},
+
+	        rules: {
+	        	username: "required",
+	            password: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 20
+                }
+	        },
+		    errorPlacement: function(error, element) {
+		        error.insertAfter("#"+element.attr("id")+"_error_holder");
+		   },
+	        
+	        // Specify the validation error messages
+	        messages: {
+	            username: "Username is required",
+	            password: {
+                    required: "Password is required",
+                    minlength: "6 to 20 characters required for password"
+                }
+	        },
+
+	        submitHandler: function(form) {
+	            form.submit();
+	        }
+
+	    });        
+	});
+
+</script>
+</html>

@@ -1,0 +1,39 @@
+{
+  "name": "TWoA-Te-Kupenga",
+  "version": "0.1.5",
+  "description": "Tauria dashboard",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "body-parser": "1.14.1",
+    "connect-flash": "0.1.1",
+    "cookie-parser": "1.4.0",
+    "cron": "~1.0.9",
+    "ejs": "2.3.3",
+    "express": "4.13.3",
+    "express-session": "1.12.1",
+    "express-validator": "2.18.0",
+    "fs": "0.0.2",
+    "http": "0.0.0",
+    "jsforce": "1.5.0",
+    "newrelic": "^1.24.0",
+    "node-localstorage": "0.6.0",
+    "passport": "0.3.2",
+    "pg": "4.x"
+  },
+  "engines": {
+    "node": "0.12.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ashandilhara/Heroku-TWoA-Te-Kupenga.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}
